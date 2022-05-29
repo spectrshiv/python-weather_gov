@@ -1,5 +1,4 @@
-from msilib.schema import Error
-
+# Not completely implemented for custom parameters
 
 VALID_WFO = ["AKQ", "ALY", "BGM", "BOX", "BTV", "BUF", "CAE", 
             "CAR", "CHS", "CLE", "CTP", "GSP", "GYX", "ILM", 
@@ -69,36 +68,3 @@ VALID_ALERT_URGENCY = VALID_URGENCY
 VALID_ALERT_RESPONSE = ["Shelter", "Evacuate", "Prepare", "Execute", "Avoid", "Monitor", "Assess", "AllClear", "None"]
 
 VALID_ZONE_TYPE = [ "land", "marine", "forecast", "public", "coastal", "offshore", "fire", "county"]
-
-
-param_map = {
-    'default': {
-        'area': VALID_AREA_CODE,
-        'units': VALID_UNITS,},
-    'alerts': {
-        'MessageType': VALID_ALERT_MESSAGE_TYPE,
-        'category': VALID_ALERT_CATEGORY,
-        'severity': VALID_ALERT_SEVERITY,
-        'certainty': VALID_ALERT_CERTAINTY,
-        'urgency': VALID_ALERT_URGENCY,
-        'status': VALID_ALERT_STATUS,
-        'response': VALID_ALERT_RESPONSE,},
-    'zones': {
-        'type': VALID_ZONE_TYPE,},
-}
-
-
-def validate_params(params, type):
-    """
-    Validates the parameters passed to the API.
-    """        
-    
-    if type in param_map["default"].keys():
-        for param in params:
-            if param not in param_map["default"][type]:
-                raise Error("Invalid parameter: %s" % param)
-    
-    for param in params:
-        if param not in param_map[type].keys():
-            return False
-    return True

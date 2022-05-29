@@ -1,12 +1,10 @@
 import urllib.request
 import urllib.parse
-import uuid
 import json
 from weather_gov import endpoints
-from pprint import pprint
 
 class Client:
-    def __init__(self, email: str=None):
+    def __init__(self, email: str=None) -> None:
         self.API_BASE = "https://api.weather.gov"
         self.user_agent = f"python-weather-gov|{email}"
         self.alerts = endpoints.Alerts(self)
@@ -21,7 +19,7 @@ class Client:
     
     def get(self, endpoint: str, params: dict=None, json_response: bool=True, feature_flags: list=None) -> dict:
         url = f"{self.API_BASE}/{endpoint}"
-        if params: # ToDo: parameter validation (type, values)
+        if params: 
             url += "?" + urllib.parse.urlencode(params)
         
         headers = {'User-Agent': self.user_agent}
@@ -36,6 +34,6 @@ class Client:
             return response.read().decode('utf-8')
         
 
-    def glossary(self, **params):
+    def glossary(self, **params) -> dict:
         return self.get("glossary", params)
     

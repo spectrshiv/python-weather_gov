@@ -1,6 +1,7 @@
 import weather_gov
+from pprint import pprint
 
 
 client = weather_gov.Client()
 
-print(client.alerts(limit=1))
+pprint(client.alerts(limit=5, urgency="Immediate"))
