@@ -115,12 +115,14 @@ class Offices(Base_Endpoint):
         return self.parent.get(f"offices/{officeID}/headlines/{headlineID}", params)
 
 
-class Points:
+class Points(Base_Endpoint):
     def __init__(self, parent) -> None:
         self.parent = parent
+        self.json_data = None
 
-    def __call__(self) -> dict:
-        raise NotImplementedError("Points() method is not implemented")
+    def toPoint(self, LAT:float, LON:float, **params) -> dict:
+        self.json_data = self.id(f"{LAT},{LON}".format(LAT,LON))
+        return self.json_data
 
     def id(self, pointID: str, **params) -> dict:
         return self.parent.get(f"points/{pointID}", params)
