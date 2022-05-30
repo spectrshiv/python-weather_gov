@@ -124,6 +124,10 @@ class Points(Base_Endpoint):
         self.json_data = self.id(f"{LAT},{LON}".format(LAT,LON))
         return self.json_data
 
+    def getGrid(self):
+        if self.json_data and self.json_data.get("properties"):
+            return tuple( self.json_data["properties"][k] for k in ["gridId", "gridX", "gridY"] )
+
     def id(self, pointID: str, **params) -> dict:
         return self.parent.get(f"points/{pointID}", params)
         
