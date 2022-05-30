@@ -78,7 +78,7 @@ class Stations:
         self.parent = parent
         
     def __call__(self, **params) -> dict: 
-        return self.parent.get(f"stations", params)
+        return self.parent.get("stations", params)
     
     def id(self, stationID: str, **params) -> dict:
         return self.parent.get(f"stations/{stationID}", params)
@@ -97,7 +97,7 @@ class Offices(Base_Endpoint):
         super().__init__(parent)
         
     def __call__(self, **params) -> dict:
-        return self.parent.get(f"offices", params)
+        return self.parent.get("offices", params)
     
     def id(self, officeID: str, **params) -> dict:
         if officeID not in self._wfo:
@@ -189,17 +189,17 @@ class Zones(Base_Endpoint):
         self.parent.get("zones", params)
         
     def type(self, zoneType: str, **params) -> dict:
-        if zoneType not in self._zone_types:
+        if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
         return self.parent.get(f"zones/types/{zoneType}", params)
 
     def type_zone_id(self, zoneType: str, zoneID: str, **params) -> dict:
-        if zoneType not in self._zone_types:
+        if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
         return self.parent.get(f"zones/types/{zoneType}/{zoneID}", params)
     
     def type_zone_id_forecast(self, zoneType: str, zoneID: str, **params) -> dict:
-        if zoneType not in self._zone_types:
+        if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
         return self.parent.get(f"zones/types/{zoneType}/{zoneID}/forecast", params)
 
