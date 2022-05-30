@@ -57,7 +57,7 @@ class Gridpoints(Base_Endpoint):
                 raise ValueError(f"{feature} is not a valid feature")
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
-        return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/forecast", params, feature_flags=features)
+        return self.parent.get(f"gridpoints/{wfo}/{x},{y}/forecast", params, feature_flags=features)
     
     def forecast_hourly(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
         for feature in features:
@@ -65,7 +65,7 @@ class Gridpoints(Base_Endpoint):
                 raise ValueError(f"{feature} is not a valid feature")
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
-        return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/forecast/hourly", params, feature_flags=features)
+        return self.parent.get(f"gridpoints/{wfo}/{x},{y}/forecast/hourly", params, feature_flags=features)
 
     def stations(self, wfo:str, x:int, y:int, **params) -> dict:
         if wfo not in self._wfo:
