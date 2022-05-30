@@ -51,7 +51,7 @@ class Gridpoints(Base_Endpoint):
             raise ValueError(f"{wfo} is not a valid WFO")
         self.parent.get(f"gridpoints/{wfo}/{x}/{y}", params)
         
-    def forcast(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
+    def forecast(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
         for feature in features:
             if feature not in self._features:
                 raise ValueError(f"{feature} is not a valid feature")
