@@ -3,6 +3,7 @@ import urllib.parse
 import json
 from weather_gov import endpoints
 
+
 class Client:
     def __init__(self, email: str = None) -> None:
         self.API_BASE = "https://api.weather.gov"
@@ -16,20 +17,23 @@ class Client:
         self.products = endpoints.Products(self)
         self.zones = endpoints.Zones(self)
 
-    def get(self, endpoint: str,
-            params: dict = None,
-            json_response: bool = True,
-            feature_flags: list = None) -> dict:
-    
+    def get(
+        self,
+        endpoint: str,
+        params: dict = None,
+        json_response: bool = True,
+        feature_flags: list = None,
+    ) -> dict:
+
         url = f"{self.API_BASE}/{endpoint}"
-        if params: 
+        if params:
             url += "?" + urllib.parse.urlencode(params)
-        
-        headers = {'User-Agent': self.user_agent}
-        
+
+        headers = {"User-Agent": self.user_agent}
+
         if feature_flags:
-            headers['Feature-Flags'] = feature_flags
-        
+            headers["Feature-Flags"] = feature_flags
+
         req = urllib.request.Request(url, data=None, headers=headers)
 
         response = None
@@ -52,8 +56,8 @@ class Client:
 
         if response:
             if json_response:
-                return json.loads(response.read().decode('utf-8'))
-            return response.read().decode('utf-8')
+                return json.loads(response.read().decode("utf-8"))
+            return response.read().decode("utf-8")
 
     def glossary(self, **params) -> dict:
         return self.get("glossary", params)
