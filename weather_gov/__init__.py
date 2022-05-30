@@ -31,7 +31,26 @@ class Client:
             headers['Feature-Flags'] = feature_flags
         
         req = urllib.request.Request(url, data=None, headers=headers)
-        with urllib.request.urlopen(req) as response: # ToDo: Handle urllib request errors
+
+        response = None
+
+        try:
+            print(req)
+            response = urllib.request.urlopen(req)
+
+        except urllib.error.HTTPError as exc:
+            print("HTTP error {}: {} ({})".format(exc.code, exc.reason, url))
+            sys.exit(1)
+
+        except urllib.error.URLError as exc:
+            print("urllib get failed: {}".format(exc.reason))
+            sys.exit(1)
+
+        except Exception as exc:
+            print("Huh? {}".format(exc))
+            sys.exit(1)
+
+        if response:
             if json_response:
                 return json.loads(response.read().decode('utf-8'))
             return response.read().decode('utf-8')
