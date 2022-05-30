@@ -4,7 +4,7 @@ import json
 from weather_gov import endpoints
 
 class Client:
-    def __init__(self, email: str=None) -> None:
+    def __init__(self, email: str = None) -> None:
         self.API_BASE = "https://api.weather.gov"
         self.user_agent = f"python-weather-gov|{email}"
         self.alerts = endpoints.Alerts(self)
@@ -15,9 +15,12 @@ class Client:
         self.radar = endpoints.Radar(self)
         self.products = endpoints.Products(self)
         self.zones = endpoints.Zones(self)
+
+    def get(self, endpoint: str,
+            params: dict = None,
+            json_response: bool = True,
+            feature_flags: list = None) -> dict:
     
-    
-    def get(self, endpoint: str, params: dict=None, json_response: bool=True, feature_flags: list=None) -> dict:
         url = f"{self.API_BASE}/{endpoint}"
         if params: 
             url += "?" + urllib.parse.urlencode(params)
@@ -32,8 +35,6 @@ class Client:
             if json_response:
                 return json.loads(response.read().decode('utf-8'))
             return response.read().decode('utf-8')
-        
 
     def glossary(self, **params) -> dict:
         return self.get("glossary", params)
-    

@@ -14,12 +14,12 @@ class Base_Endpoint:
 
 
 class Alerts(Base_Endpoint):
-    def __call__(self, alertID: str=None, **params) -> dict:
+    def __call__(self, alertID: str = None, **params) -> dict:
 
         if alertID:
             return self.parent.get(f"alerts/{alertID}", params)
         return self.parent.get("alerts", params)
-            
+
     def active(self, **params) -> dict:
 
         return self.parent.get("alerts/active", params)
@@ -51,7 +51,7 @@ class Gridpoints(Base_Endpoint):
             raise ValueError(f"{wfo} is not a valid WFO")
         self.parent.get(f"gridpoints/{wfo}/{x}/{y}", params)
         
-    def forcast(self, wfo:str, x:int, y:int, features:list=None, **params) -> dict:
+    def forcast(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
         for feature in features:
             if feature not in self._features:
                 raise ValueError(f"{feature} is not a valid feature")
@@ -59,7 +59,7 @@ class Gridpoints(Base_Endpoint):
             raise ValueError(f"{wfo} is not a valid WFO")
         return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/forecast", params, feature_flags=features)
     
-    def forecast_hourly(self, wfo:str, x:int, y:int, features:list=None, **params) -> dict:
+    def forecast_hourly(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
         for feature in features:
             if feature not in self._features:
                 raise ValueError(f"{feature} is not a valid feature")
@@ -129,65 +129,65 @@ class Points:
 class Radar(Base_Endpoint):
     def __init__(self, parent) -> None:
         super().__init__(parent)
-
+        
     def __call__(self) -> dict:
         raise NotImplementedError("Radar() method is not implemented")
-    
+
     def servers(self, **params) -> dict:
         return self.parent.get("radar/servers", params)
 
     def server_id(self, serverID: str, **params) -> dict:
         return self.parent.get(f"radar/servers/{serverID}", params)
-    
+
     def stations(self, **params) -> dict:
         return self.parent.get("radar/stations", params)
-    
+
     def station_id(self, stationID: str, **params) -> dict:
         return self.parent.get(f"radar/stations/{stationID}", params)
-    
+
     def station_id_alarms(self, stationID: str, **params) -> dict:
         return self.parent.get(f"radar/stations/{stationID}/alarms", params)
 
     def queues(self, host:str, **params) -> dict:
         return self.parent.get(f"radar/queues/{host}", params)
-    
+
 
 class Products:
     def __init__(self, parent) -> None:
         self.parent = parent
-        
+
     def __call__(self, **params) -> dict:
         return self.parent.get("products", params)
-    
+
     def locations(self, **params) -> dict:
         return self.parent.get("products/locations", params)
-    
+
     def types(self, **params) -> dict:
         return self.parent.get("products/types", params)
-    
+
     def id(self, productID: str, **params) -> dict:
         return self.parent.get(f"products/{productID}", params)
-    
+
     def type_id(self, typeID: str, **params) -> dict:
         return self.parent.get(f"products/types/{typeID}", params)
-    
+
     def type_id_locations(self, typeID: str, **params) -> dict:
         return self.parent.get(f"products/types/{typeID}/locations", params)
-    
+
     def location_id_types(self, locationID: str, **params) -> dict:
         return self.parent.get(f"products/locations/{locationID}/types", params)
-    
+
     def type_id_location_id(self, typeID: str, locationID: str, **params) -> dict:
         return self.parent.get(f"products/types/{typeID}/locations/{locationID}", params)
-    
-    
+
+
 class Zones(Base_Endpoint):
     def __init__(self, parent) -> None:
         super().__init__(parent)
-        
+
     def __call__(self, **params) -> dict:
         self.parent.get("zones", params)
-        
+
     def type(self, zoneType: str, **params) -> dict:
         if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
@@ -197,7 +197,7 @@ class Zones(Base_Endpoint):
         if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
         return self.parent.get(f"zones/types/{zoneType}/{zoneID}", params)
-    
+
     def type_zone_id_forecast(self, zoneType: str, zoneID: str, **params) -> dict:
         if zoneType not in self._zone_type:
             raise ValueError(f"{zoneType} is not a valid zone type")
@@ -205,6 +205,6 @@ class Zones(Base_Endpoint):
 
     def forecast_id_observations(self, zoneID: str, **params) -> dict:
         return self.parent.get(f"zones/forecasts/{zoneID}/observations", params)
-    
+
     def forecast_id_stations(self, zoneID: str, **params) -> dict:
         return self.parent.get(f"zones/forecasts/{zoneID}/stations", params)
