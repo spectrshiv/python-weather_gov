@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     
 setuptools.setup(
     name="weather_gov",
-    version="0.1",
+    version="0.2",
     #scripts=["weather_gov"],
     author="TJ Courier",
     author_email="pycepticus@gmail.com",
