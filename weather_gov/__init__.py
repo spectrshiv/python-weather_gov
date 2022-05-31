@@ -31,7 +31,8 @@ class Client:
 
         headers = {"User-Agent": self.user_agent}
 
-        if feature_flags:
+        ## XXX: Including these headers breaks retreival?
+        if False and feature_flags:
             headers["Feature-Flags"] = feature_flags
 
         req = urllib.request.Request(url, data=None, headers=headers)

@@ -54,9 +54,10 @@ class Gridpoints(Base_Endpoint):
     def forecast(
         self, wfo: str, x: int, y: int, features: list = None, **params
     ) -> dict:
-        for feature in features:
-            if feature not in self._features:
-                raise ValueError(f"{feature} is not a valid feature")
+        if features:
+            for feature in features:
+                if feature not in self._features:
+                    raise ValueError(f"{feature} is not a valid feature")
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
         return self.parent.get(
@@ -66,9 +67,10 @@ class Gridpoints(Base_Endpoint):
     def forecast_hourly(
         self, wfo: str, x: int, y: int, features: list = None, **params
     ) -> dict:
-        for feature in features:
-            if feature not in self._features:
-                raise ValueError(f"{feature} is not a valid feature")
+        if features:
+            for feature in features:
+                if feature not in self._features:
+                    raise ValueError(f"{feature} is not a valid feature")
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
         return self.parent.get(
