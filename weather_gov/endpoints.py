@@ -129,11 +129,27 @@ class Offices(Base_Endpoint):
 class Points(Base_Endpoint):
     def __init__(self, parent) -> None:
         self.parent = parent
+        self.Id = None
+        self.LAT = None
+        self.LON = None
         self.json_data = None
 
-    def toPoint(self, LAT: float, LON: float, **params) -> dict:
+    def fromLatLon(self, LAT: float, LON: float, **params) -> dict:
+        if self.json_data:
+            return self.json_data
+
         self.json_data = self.id(f"{LAT},{LON}".format(LAT, LON))
-        return self.json_data
+        self.Id, self.LAT, self.LON = self.getGrid()
+        return self.getPoint()
+
+    def setPoint(self, Id: str, LAT: float, LON: float):
+        self.Id = Id
+        self.LAT = LAT
+        self.LON = LON
+
+    def getPoint(self):
+        return (self.Id, self.LAT, self.LON)
+
 
     def getGrid(self):
         if self.json_data and self.json_data.get("properties"):
