@@ -40,7 +40,6 @@ class Client:
         response = None
 
         try:
-            print(req)
             response = urllib.request.urlopen(req)
 
         except urllib.error.HTTPError as exc:
@@ -52,7 +51,7 @@ class Client:
             sys.exit(1)
 
         except Exception as exc:
-            print("Huh? {}".format(exc))
+            print("Unhandled exception on [{}]: {}, {}".format(url, exc, exc.reason))
             sys.exit(1)
 
         if response:
