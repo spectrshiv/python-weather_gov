@@ -23,20 +23,20 @@ class Alerts(Base_Endpoint):
     def active(self, **params) -> dict:
 
         return self.parent.get("alerts/active", params)
-    
+
     def active_count(self, **params) -> dict:
         return self.parent.get("alerts/active/count", params)
-    
+
     def active_zone(self, zoneID: str, **params) -> dict:
         return self.parent.get(f"alerts/active/zone/{zoneID}", params)
 
     def active_area(self, area: str, **params) -> dict:
         return self.parent.get(f"alerts/active/area/{area}", params)
-    
+
     def active_region(self, region: str, **params) -> dict:
-        
+
         return self.parent.get(f"alerts/active/region/{region}", params)
-    
+
     def types(self, **params) -> dict:
         return self.parent.get("alerts/types", params)
 
@@ -45,29 +45,39 @@ class Gridpoints(Base_Endpoint):
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self._features = validations.VALID_GRIDPOINT_FORCAST_FEATURES
-    
-    def __call__(self, wfo:str, x:int, y:int, **params) -> dict:
+
+    def __call__(self, wfo: str, x: int, y: int, **params) -> dict:
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
         self.parent.get(f"gridpoints/{wfo}/{x}/{y}", params)
-        
-    def forcast(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
-        for feature in features:
-            if feature not in self._features:
-                raise ValueError(f"{feature} is not a valid feature")
-        if wfo not in self._wfo:
-            raise ValueError(f"{wfo} is not a valid WFO")
-        return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/forecast", params, feature_flags=features)
-    
-    def forecast_hourly(self, wfo:str, x:int, y:int, features: list = None, **params) -> dict:
-        for feature in features:
-            if feature not in self._features:
-                raise ValueError(f"{feature} is not a valid feature")
-        if wfo not in self._wfo:
-            raise ValueError(f"{wfo} is not a valid WFO")
-        return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/forecast/hourly", params, feature_flags=features)
 
-    def stations(self, wfo:str, x:int, y:int, **params) -> dict:
+    def forecast(
+        self, wfo: str, x: int, y: int, features: list = None, **params
+    ) -> dict:
+        if features:
+            for feature in features:
+                if feature not in self._features:
+                    raise ValueError(f"{feature} is not a valid feature")
+        if wfo not in self._wfo:
+            raise ValueError(f"{wfo} is not a valid WFO")
+        return self.parent.get(
+            f"gridpoints/{wfo}/{x},{y}/forecast", params, feature_flags=features
+        )
+
+    def forecast_hourly(
+        self, wfo: str, x: int, y: int, features: list = None, **params
+    ) -> dict:
+        if features:
+            for feature in features:
+                if feature not in self._features:
+                    raise ValueError(f"{feature} is not a valid feature")
+        if wfo not in self._wfo:
+            raise ValueError(f"{wfo} is not a valid WFO")
+        return self.parent.get(
+            f"gridpoints/{wfo}/{x},{y}/forecast/hourly", params, feature_flags=features
+        )
+
+    def stations(self, wfo: str, x: int, y: int, **params) -> dict:
         if wfo not in self._wfo:
             raise ValueError(f"{wfo} is not a valid WFO")
         return self.parent.get(f"gridpoints/{wfo}/{x}/{y}/stations", params)
@@ -76,34 +86,35 @@ class Gridpoints(Base_Endpoint):
 class Stations:
     def __init__(self, parent) -> None:
         self.parent = parent
-        
-    def __call__(self, **params) -> dict: 
+
+    def __call__(self, **params) -> dict:
         return self.parent.get("stations", params)
-    
+
     def id(self, stationID: str, **params) -> dict:
         return self.parent.get(f"stations/{stationID}", params)
-    
+
     def id_observations(self, stationID: str, **params) -> dict:
         return self.parent.get(f"stations/{stationID}/observations", params)
-    
+
     def id_observations_latest(self, stationID: str, **params) -> dict:
         return self.parent.get(f"stations/{stationID}/observations/latest", params)
-    
-    def id_observations_time(self, stationID: str, time:str,  **params) -> dict:
+
+    def id_observations_time(self, stationID: str, time: str, **params) -> dict:
         return self.parent.get(f"stations/{stationID}/observations/{time}", params)
-    
+
+
 class Offices(Base_Endpoint):
     def __init__(self, parent) -> None:
         super().__init__(parent)
-        
+
     def __call__(self, **params) -> dict:
         return self.parent.get("offices", params)
-    
+
     def id(self, officeID: str, **params) -> dict:
         if officeID not in self._wfo:
             raise ValueError(f"{officeID} is not a valid WFO")
         return self.parent.get(f"offices/{officeID}", params)
-    
+
     def headlines(self, officeID: str, **params) -> dict:
         if officeID not in self._wfo:
             raise ValueError(f"{officeID} is not a valid WFO")
@@ -115,21 +126,45 @@ class Offices(Base_Endpoint):
         return self.parent.get(f"offices/{officeID}/headlines/{headlineID}", params)
 
 
-class Points:
+class Points(Base_Endpoint):
     def __init__(self, parent) -> None:
         self.parent = parent
+        self.Id = None
+        self.LAT = None
+        self.LON = None
+        self.json_data = None
 
-    def __call__(self) -> dict:
-        raise NotImplementedError("Points() method is not implemented")
+    def fromLatLon(self, LAT: float, LON: float, **params) -> dict:
+        if self.json_data:
+            return self.json_data
+
+        self.json_data = self.id(f"{LAT},{LON}".format(LAT, LON))
+        self.Id, self.LAT, self.LON = self.getGrid()
+        return self.getPoint()
+
+    def setPoint(self, Id: str, LAT: float, LON: float):
+        self.Id = Id
+        self.LAT = LAT
+        self.LON = LON
+
+    def getPoint(self):
+        return (self.Id, self.LAT, self.LON)
+
+
+    def getGrid(self):
+        if self.json_data and self.json_data.get("properties"):
+            return tuple(
+                self.json_data["properties"][k] for k in ["gridId", "gridX", "gridY"]
+            )
 
     def id(self, pointID: str, **params) -> dict:
         return self.parent.get(f"points/{pointID}", params)
-        
-        
+
+
 class Radar(Base_Endpoint):
     def __init__(self, parent) -> None:
         super().__init__(parent)
-        
+
     def __call__(self) -> dict:
         raise NotImplementedError("Radar() method is not implemented")
 
@@ -148,7 +183,7 @@ class Radar(Base_Endpoint):
     def station_id_alarms(self, stationID: str, **params) -> dict:
         return self.parent.get(f"radar/stations/{stationID}/alarms", params)
 
-    def queues(self, host:str, **params) -> dict:
+    def queues(self, host: str, **params) -> dict:
         return self.parent.get(f"radar/queues/{host}", params)
 
 
@@ -178,7 +213,9 @@ class Products:
         return self.parent.get(f"products/locations/{locationID}/types", params)
 
     def type_id_location_id(self, typeID: str, locationID: str, **params) -> dict:
-        return self.parent.get(f"products/types/{typeID}/locations/{locationID}", params)
+        return self.parent.get(
+            f"products/types/{typeID}/locations/{locationID}", params
+        )
 
 
 class Zones(Base_Endpoint):
